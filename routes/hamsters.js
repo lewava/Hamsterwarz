@@ -63,8 +63,9 @@ router.post("/", async (req, res) => {
     return;
   }
 
-  await database.collection("hamster").add(obj);
-  res.send("Hamster added.");
+  const docRef = await database.collection("hamster").add(obj);
+  const id = { id: docRef.id };
+  res.send(id);
 });
 
 router.put("/:id", async (req, res) => {
@@ -81,23 +82,18 @@ router.put("/:id", async (req, res) => {
     }
   });
 
-  // Kolla med david 400 bad request error handling.
-  // Kolla med david om det behövs mer felhantering.
-  if (!obj) {
+  if (!checkInput(obj)) {
     res.status(400).send("Wrong object structure.");
     return;
-  }
-
-  if (!hamsterId) {
+  } else if (!hamsterId) {
     res.status(404).send("There is no hamster with that id.");
     return;
-  } else {
-    await database.collection("hamster").doc(id).set(obj, { merge: true });
-    res.send("Hamster changed.");
   }
+
+  await database.collection("hamster").doc(id).set(obj, { merge: true });
+  res.send("Hamster changed.");
 });
 
-// Kolla med david 400 bad request error handling.
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const hamsterRef = database.collection("hamster");
@@ -113,25 +109,70 @@ router.delete("/:id", async (req, res) => {
   if (!hamsterId) {
     res.status(404).send("There is no hamster with that id.");
     return;
-  } else {
-    await database.collection("hamster").doc(id).delete();
-    res.send("Hamster deleted.");
   }
+
+  await database.collection("hamster").doc(id).delete();
+  res.send("Hamster deleted.");
 });
 
 function checkHamsterObj(obj) {
   if (
     obj.hasOwnProperty("name") &&
+    typeof obj.name === "string" &&
     obj.hasOwnProperty("age") &&
+    typeof obj.age === "number" &&
     obj.hasOwnProperty("favFood") &&
+    typeof obj.favFood === "string" &&
     obj.hasOwnProperty("loves") &&
+    typeof obj.loves === "string" &&
     obj.hasOwnProperty("imgName") &&
+    typeof obj.imgName === "string" &&
     obj.hasOwnProperty("wins") &&
+    typeof obj.wins === "number" &&
     obj.hasOwnProperty("defeats") &&
-    obj.hasOwnProperty("games")
+    typeof obj.defeats === "number" &&
+    obj.hasOwnProperty("games") &&
+    typeof obj.games === "number"
   )
     return true;
   else return false;
+}
+
+function checkInput(obj) {
+  for (const property in obj) {
+    if (
+      property === "name" ||
+      property === "age" ||
+      property === "favFood" ||
+      property === "loves" ||
+      property === "imgName" ||
+      property === "wins" ||
+      property === "defeats" ||
+      property === "games"
+    )
+      continue;
+    else return false;
+  }
+
+  for (const property in obj) {
+    if (property === "name" && typeof obj[property] !== "string") return false;
+    else if (property === "age" && typeof obj[property] !== "number")
+      return false;
+    else if (property === "favFood" && typeof obj[property] !== "string")
+      return false;
+    else if (property === "loves" && typeof obj[property] !== "string")
+      return false;
+    else if (property === "imgName" && typeof obj[property] !== "string")
+      return false;
+    else if (property === "wins" && typeof obj[property] !== "number")
+      return false;
+    else if (property === "defeats" && typeof obj[property] !== "number")
+      return false;
+    else if (property === "games" && typeof obj[property] !== "number")
+      return false;
+    else continue;
+  }
+  return true;
 }
 
 module.exports = router;
