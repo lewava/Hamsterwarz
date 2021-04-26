@@ -58,7 +58,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const obj = req.body;
 
-  if (!error.checkHamsterObj(obj)) {
+  if (!error.checkHamsterPost(obj)) {
     res.status(400).send("Wrong object structure.");
     return;
   }
@@ -72,21 +72,13 @@ router.put("/:id", async (req, res) => {
   const obj = req.body;
   const id = req.params.id;
 
-  const hamsterRef = database.collection("hamster");
-  const snapshot = await hamsterRef.get();
+  const docRef = await database.collection("hamster").doc(id).get();
 
-  let hamsterId = false;
-  snapshot.forEach((doc) => {
-    if (id === doc.id) {
-      hamsterId = true;
-    }
-  });
-
-  if (!error.checkInput(obj)) {
+  if (!error.checkHamsterPut(obj)) {
     res.status(400).send("Wrong object structure.");
     return;
-  } else if (!hamsterId) {
-    res.status(404).send("There is no hamster with that id.");
+  } else if (!docRef.exists) {
+    res.status(404).send("Couldn't find the hamster.");
     return;
   }
 
@@ -96,18 +88,11 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
-  const hamsterRef = database.collection("hamster");
-  const snapshot = await hamsterRef.get();
 
-  let hamsterId = false;
-  snapshot.forEach((doc) => {
-    if (id === doc.id) {
-      hamsterId = true;
-    }
-  });
+  const docRef = await database.collection("hamster").doc(id).get();
 
-  if (!hamsterId) {
-    res.status(404).send("There is no hamster with that id.");
+  if (!docRef.exists) {
+    res.status(404).send("Couldn't find the hamster.");
     return;
   }
 

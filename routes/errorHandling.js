@@ -1,10 +1,10 @@
-function checkHamsterObj(obj) {
+function checkHamsterPost(obj) {
   for (const property in obj) {
     if (
       (property === "name" && typeof obj.name === "string") ||
       (property === "age" && typeof obj.age === "number") ||
       (property === "favFood" && typeof obj.favFood === "string") ||
-      (property === "loves" && typeof typeof obj.loves === "string") ||
+      (property === "loves" && typeof obj.loves === "string") ||
       (property === "imgName" && typeof obj.imgName === "string") ||
       (property === "wins" && typeof obj.wins === "number") ||
       (property === "defeats" && typeof obj.defeats === "number") ||
@@ -16,7 +16,11 @@ function checkHamsterObj(obj) {
   return true;
 }
 
-function checkInput(obj) {
+function checkHamsterPut(obj) {
+  const objLength = Object.keys(obj);
+
+  if (objLength.length === 0) return false;
+
   for (const property in obj) {
     if (
       property === "name" ||
@@ -53,5 +57,5 @@ function checkInput(obj) {
   return true;
 }
 
-module.exports.checkHamsterObj = checkHamsterObj;
-module.exports.checkInput = checkInput;
+module.exports.checkHamsterPost = checkHamsterPost;
+module.exports.checkHamsterPut = checkHamsterPut;
