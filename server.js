@@ -4,7 +4,7 @@ const cors = require("cors");
 const hamsters = require("./routes/hamsters.js");
 const path = require("path");
 
-const PORT = 2000;
+const PORT = process.env.PORT || 2000;
 const publicFolder = path.join(__dirname, "public");
 
 app.use((req, res, next) => {
