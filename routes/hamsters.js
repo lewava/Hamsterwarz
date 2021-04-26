@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-
 const getDatabase = require("../database.js");
 const database = getDatabase();
+const error = require("./errorHandling.js");
 
 router.get("/", async (req, res) => {
   const docRef = database.collection("hamster");
@@ -58,7 +58,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const obj = req.body;
 
-  if (!checkHamsterObj(obj)) {
+  if (!error.checkHamsterObj(obj)) {
     res.status(400).send("Wrong object structure.");
     return;
   }
@@ -82,7 +82,7 @@ router.put("/:id", async (req, res) => {
     }
   });
 
-  if (!checkInput(obj)) {
+  if (!error.checkInput(obj)) {
     res.status(400).send("Wrong object structure.");
     return;
   } else if (!hamsterId) {
@@ -114,65 +114,5 @@ router.delete("/:id", async (req, res) => {
   await database.collection("hamster").doc(id).delete();
   res.send("Hamster deleted.");
 });
-
-function checkHamsterObj(obj) {
-  if (
-    obj.hasOwnProperty("name") &&
-    typeof obj.name === "string" &&
-    obj.hasOwnProperty("age") &&
-    typeof obj.age === "number" &&
-    obj.hasOwnProperty("favFood") &&
-    typeof obj.favFood === "string" &&
-    obj.hasOwnProperty("loves") &&
-    typeof obj.loves === "string" &&
-    obj.hasOwnProperty("imgName") &&
-    typeof obj.imgName === "string" &&
-    obj.hasOwnProperty("wins") &&
-    typeof obj.wins === "number" &&
-    obj.hasOwnProperty("defeats") &&
-    typeof obj.defeats === "number" &&
-    obj.hasOwnProperty("games") &&
-    typeof obj.games === "number"
-  )
-    return true;
-  else return false;
-}
-
-function checkInput(obj) {
-  for (const property in obj) {
-    if (
-      property === "name" ||
-      property === "age" ||
-      property === "favFood" ||
-      property === "loves" ||
-      property === "imgName" ||
-      property === "wins" ||
-      property === "defeats" ||
-      property === "games"
-    )
-      continue;
-    else return false;
-  }
-
-  for (const property in obj) {
-    if (property === "name" && typeof obj[property] !== "string") return false;
-    else if (property === "age" && typeof obj[property] !== "number")
-      return false;
-    else if (property === "favFood" && typeof obj[property] !== "string")
-      return false;
-    else if (property === "loves" && typeof obj[property] !== "string")
-      return false;
-    else if (property === "imgName" && typeof obj[property] !== "string")
-      return false;
-    else if (property === "wins" && typeof obj[property] !== "number")
-      return false;
-    else if (property === "defeats" && typeof obj[property] !== "number")
-      return false;
-    else if (property === "games" && typeof obj[property] !== "number")
-      return false;
-    else continue;
-  }
-  return true;
-}
 
 module.exports = router;
