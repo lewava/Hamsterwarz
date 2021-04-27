@@ -57,5 +57,19 @@ function checkHamsterPut(obj) {
   return true;
 }
 
+function checkMatchPost(obj) {
+  for (const property in obj) {
+    if (
+      (property === "winnerId" && typeof obj.winnerId === "string") ||
+      (property === "loserId" && typeof obj.loserId === "string")
+    )
+      continue;
+    else return false;
+  }
+
+  return true;
+}
+
 module.exports.checkHamsterPost = checkHamsterPost;
 module.exports.checkHamsterPut = checkHamsterPut;
+module.exports.checkMatchPost = checkMatchPost;
