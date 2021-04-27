@@ -11,17 +11,17 @@ router.get("/", async (req, res) => {
     return;
   }
 
-  let winnerIds = [];
+  let loserIds = [];
   snapshot.forEach((doc) => {
-    winnerIds.push(doc.data().winnerId);
+    loserIds.push(doc.data().loserId);
   });
 
   let counts = {};
-  for (let i = 0; i < winnerIds.length; i++) {
-    if (!counts.hasOwnProperty(winnerIds[i])) {
-      counts[winnerIds[i]] = 1;
+  for (let i = 0; i < loserIds.length; i++) {
+    if (!counts.hasOwnProperty(loserIds[i])) {
+      counts[loserIds[i]] = 1;
     } else {
-      counts[winnerIds[i]]++;
+      counts[loserIds[i]]++;
     }
   }
 
