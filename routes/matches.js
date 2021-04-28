@@ -29,7 +29,8 @@ router.get("/:id", async (req, res) => {
     return;
   }
 
-  res.send(snapshot.data());
+  const data = snapshot.data();
+  res.send(data);
 });
 
 router.post("/", async (req, res) => {
@@ -40,6 +41,7 @@ router.post("/", async (req, res) => {
     return;
   }
 
+  //Funkar inte med testet
   const winnerSnapshot = await database
     .collection("hamster")
     .doc(obj.winnerId)
